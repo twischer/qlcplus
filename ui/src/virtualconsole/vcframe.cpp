@@ -64,12 +64,14 @@ VCFrame::VCFrame(QWidget* parent, Doc* doc, bool canCollapse) : VCWidget(parent,
     , m_label(NULL)
     , m_collapsed(false)
     , m_showHeader(true)
+    , m_showEnableButton(true)
     , m_multiPageMode(false)
     , m_currentPage(0)
     , m_totalPagesNumber(1)
     , m_nextPageBtn(NULL)
     , m_prevPageBtn(NULL)
     , m_pageLabel(NULL)
+    , m_pagesLoop(false)
 {
     /* Set the class name "VCFrame" as the object name as well */
     setObjectName(VCFrame::staticMetaObject.className());
@@ -127,7 +129,6 @@ void VCFrame::setLiveEdit(bool liveEdit)
     unsetCursor();
     update();
 }
-
 
 void VCFrame::setCaption(const QString& text)
 {
@@ -191,7 +192,8 @@ void VCFrame::setHeaderVisible(bool enable)
     {
         m_collapseButton->show();
         m_label->show();
-        m_enableButton->show();
+        if (m_showEnableButton)
+            m_enableButton->show();
     }
 }
 
@@ -200,7 +202,20 @@ bool VCFrame::isHeaderVisible() const
     return m_showHeader;
 }
 
-bool VCFrame::isCollapsed()
+void VCFrame::setEnableButtonVisible(bool show)
+{
+    if (show && m_showHeader) m_enableButton->show();
+    else m_enableButton->hide();
+
+    m_showEnableButton = show;
+}
+
+bool VCFrame::isEnableButtonVisible() const
+{
+    return m_showEnableButton;
+}
+
+bool VCFrame::isCollapsed() const
 {
     return m_collapsed;
 }
@@ -299,6 +314,8 @@ void VCFrame::createHeader()
     m_enableButton->setStyleSheet(eBtnSS);
     m_enableButton->setEnabled(true);
     m_enableButton->setChecked(true);
+    if (!m_showEnableButton)
+        m_enableButton->hide();
 
     m_hbox->addWidget(m_enableButton);
     connect(m_enableButton, SIGNAL(clicked(bool)), this, SLOT(slotEnableButtonClicked(bool)));
@@ -357,7 +374,7 @@ void VCFrame::setMultipageMode(bool enable)
             while (it.hasNext() == true)
             {
                 VCWidget* child = it.next();
-                m_pagesMap.insert(child, child->page());
+                addWidgetToPageMap(child);
             }
         }
     }
@@ -396,7 +413,19 @@ int VCFrame::totalPagesNumber()
 
 int VCFrame::currentPage()
 {
+    if (m_multiPageMode == false)
+        return 0;
     return m_currentPage;
+}
+
+void VCFrame::setPagesLoop(bool pagesLoop)
+{
+    m_pagesLoop = pagesLoop;
+}
+
+bool VCFrame::pagesLoop() const
+{
+    return m_pagesLoop;
 }
 
 void VCFrame::addWidgetToPageMap(VCWidget *widget)
@@ -411,12 +440,18 @@ void VCFrame::removeWidgetFromPageMap(VCWidget *widget)
 
 void VCFrame::slotPreviousPage()
 {
-    slotSetPage(m_currentPage - 1);
+    if (m_pagesLoop && m_currentPage == 0)
+        slotSetPage(m_totalPagesNumber - 1);
+    else
+        slotSetPage(m_currentPage - 1);
 }
 
 void VCFrame::slotNextPage()
 {
-    slotSetPage(m_currentPage + 1);
+    if (m_pagesLoop && m_currentPage == m_totalPagesNumber - 1)
+        slotSetPage(0);
+    else
+        slotSetPage(m_currentPage + 1);
 }
 
 void VCFrame::slotSetPage(int pageNum)
@@ -601,9 +636,12 @@ bool VCFrame::copyFrom(const VCWidget* widget)
         return false;
 
     setHeaderVisible(frame->m_showHeader);
+    setEnableButtonVisible(frame->m_showEnableButton);
 
     setTotalPagesNumber(frame->m_totalPagesNumber);
     setMultipageMode(frame->m_multiPageMode);
+
+    setPagesLoop(frame->m_pagesLoop);
 
     QListIterator <VCWidget*> it(widget->findChildren<VCWidget*>());
     while (it.hasNext() == true)
@@ -622,7 +660,7 @@ bool VCFrame::copyFrom(const VCWidget* widget)
             VirtualConsole::instance()->addWidgetInMap(childCopy);
         }
 
-        if (m_multiPageMode && childCopy != NULL)
+        if (childCopy != NULL)
             addWidgetToPageMap(childCopy);
 
     }
@@ -672,7 +710,7 @@ void VCFrame::editProperties()
                             widget->remapInputSources(pg);
                         }
 
-                        m_pagesMap.insert(newWidget, pg);
+                        addWidgetToPageMap(newWidget);
                     }
                 }
             }
@@ -755,6 +793,13 @@ bool VCFrame::loadXML(const QDomElement* root)
             else
                 setHeaderVisible(false);
         }
+        else if (tag.tagName() == KXMLQLCVCFrameShowEnableButton)
+        {
+            if (tag.text() == KXMLQLCTrue)
+                setEnableButtonVisible(true);
+            else
+                setEnableButtonVisible(false);
+        }
         else if (tag.tagName() == KXMLQLCVCFrameMultipage)
         {
             setMultipageMode(true);
@@ -836,6 +881,13 @@ bool VCFrame::loadXML(const QDomElement* root)
                 subNode = subNode.nextSibling();
             }
         }
+        else if (tag.tagName() == KXMLQLCVCFramePagesLoop)
+        {
+            if (tag.text() == KXMLQLCTrue)
+                setPagesLoop(true);
+            else
+                setPagesLoop(false);
+        }
         else if (tag.tagName() == KXMLQLCVCFrame)
         {
             /* Create a new frame into its parent */
@@ -844,8 +896,7 @@ bool VCFrame::loadXML(const QDomElement* root)
                 delete frame;
             else
             {
-                if (multipageMode() == true)
-                    addWidgetToPageMap(frame);
+                addWidgetToPageMap(frame);
                 frame->show();
             }
         }
@@ -857,8 +908,7 @@ bool VCFrame::loadXML(const QDomElement* root)
                 delete label;
             else
             {
-                if (multipageMode() == true)
-                    addWidgetToPageMap(label);
+                addWidgetToPageMap(label);
                 label->show();
             }
         }
@@ -870,8 +920,7 @@ bool VCFrame::loadXML(const QDomElement* root)
                 delete button;
             else
             {
-                if (multipageMode() == true)
-                    addWidgetToPageMap(button);
+                addWidgetToPageMap(button);
                 button->show();
             }
         }
@@ -883,8 +932,7 @@ bool VCFrame::loadXML(const QDomElement* root)
                 delete xypad;
             else
             {
-                if (multipageMode() == true)
-                    addWidgetToPageMap(xypad);
+                addWidgetToPageMap(xypad);
                 xypad->show();
             }
         }
@@ -896,8 +944,7 @@ bool VCFrame::loadXML(const QDomElement* root)
                 delete slider;
             else
             {
-                if (multipageMode() == true)
-                    addWidgetToPageMap(slider);
+                addWidgetToPageMap(slider);
                 slider->show();
                 // always connect a slider as it it was a submaster
                 // cause this signal is emitted only when a slider is
@@ -914,8 +961,9 @@ bool VCFrame::loadXML(const QDomElement* root)
                 delete soloframe;
             else
             {
-                if (multipageMode() == true)
-                    addWidgetToPageMap(soloframe);
+                if (m_doc->mode() == Doc::Operate)
+                    soloframe->updateChildrenConnection(true);
+                addWidgetToPageMap(soloframe);
                 soloframe->show();
             }
         }
@@ -927,8 +975,7 @@ bool VCFrame::loadXML(const QDomElement* root)
                 delete cuelist;
             else
             {
-                if (multipageMode() == true)
-                    addWidgetToPageMap(cuelist);
+                addWidgetToPageMap(cuelist);
                 cuelist->show();
             }
         }
@@ -940,8 +987,7 @@ bool VCFrame::loadXML(const QDomElement* root)
                 delete dial;
             else
             {
-                if (multipageMode() == true)
-                    addWidgetToPageMap(dial);
+                addWidgetToPageMap(dial);
                 dial->show();
             }
         }
@@ -952,11 +998,8 @@ bool VCFrame::loadXML(const QDomElement* root)
                 delete triggers;
             else
             {
-                if (multipageMode() == true)
-                    addWidgetToPageMap(triggers);
+                addWidgetToPageMap(triggers);
                 triggers->show();
-                connect(triggers, SIGNAL(enableRequest(quint32)),
-                        VirtualConsole::instance(), SLOT(slotEnableAudioTriggers(quint32)));
             }
         }
         else if (tag.tagName() == KXMLQLCVCClock)
@@ -967,8 +1010,7 @@ bool VCFrame::loadXML(const QDomElement* root)
                 delete clock;
             else
             {
-                if (multipageMode() == true)
-                    addWidgetToPageMap(clock);
+                addWidgetToPageMap(clock);
                 clock->show();
             }
         }
@@ -980,8 +1022,7 @@ bool VCFrame::loadXML(const QDomElement* root)
                 delete matrix;
             else
             {
-                if (multipageMode() == true)
-                    addWidgetToPageMap(matrix);
+                addWidgetToPageMap(matrix);
                 matrix->show();
             }
         }
@@ -1060,6 +1101,15 @@ bool VCFrame::saveXML(QDomDocument* doc, QDomElement* vc_root)
         tag.appendChild(text);
         root.appendChild(tag);
 
+        /* ShowEnableButton */
+        tag = doc->createElement(KXMLQLCVCFrameShowEnableButton);
+        if (isEnableButtonVisible())
+            text = doc->createTextNode(KXMLQLCTrue);
+        else
+            text = doc->createTextNode(KXMLQLCFalse);
+        tag.appendChild(text);
+        root.appendChild(tag);
+
         /* Collapsed */
         tag = doc->createElement(KXMLQLCVCFrameIsCollapsed);
         if (isCollapsed())
@@ -1112,6 +1162,15 @@ bool VCFrame::saveXML(QDomDocument* doc, QDomElement* vc_root)
             text = doc->createTextNode(m_previousPageKeySequence.toString());
             subtag.appendChild(text);
             saveXMLInput(doc, &tag, inputSource(previousPageInputSourceId));
+
+            /* Pages Loop */
+            tag = doc->createElement(KXMLQLCVCFramePagesLoop);
+            if (m_pagesLoop)
+                text = doc->createTextNode(KXMLQLCTrue);
+            else
+                text = doc->createTextNode(KXMLQLCFalse);
+            tag.appendChild(text);
+            root.appendChild(tag);
         }
     }
 

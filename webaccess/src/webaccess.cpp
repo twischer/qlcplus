@@ -42,6 +42,7 @@
 #include "function.h"
 #include "vclabel.h"
 #include "vcframe.h"
+#include "qlcfile.h"
 #include "chaser.h"
 #include "doc.h"
 
@@ -73,9 +74,9 @@ static int event_handler(struct mg_connection *conn, enum mg_event ev)
     {
         return MG_TRUE;
     }
-    else
+    else if (ev == MG_CLOSE)
     {
-        return MG_FALSE;
+        return s_instance->closeHandler(conn);
     }
 
     return MG_FALSE;
@@ -183,8 +184,9 @@ mg_result WebAccess::beginRequestHandler(mg_connection *conn)
   //const struct mg_request_info *ri = mg_get_request_info(conn);
   qDebug() << Q_FUNC_INFO << conn->request_method << conn->uri;
 
-  if (QString(conn->uri) == "/qlcplusWS")
+  if (QString(conn->uri) == "/qlcplusWS" || QString(conn->uri) == "/favicon.ico")
       return MG_FALSE;
+
 
   if (QString(conn->uri) == "/loadProject")
   {
@@ -259,13 +261,15 @@ mg_result WebAccess::beginRequestHandler(mg_connection *conn)
   else if (QString(conn->uri).endsWith(".css"))
   {
       QString clUri = QString(conn->uri).mid(1);
-      if (sendFile(conn, QString("%1%2%3").arg(WEBFILESDIR).arg(QDir::separator()).arg(clUri), "text/css") == true)
+      if (sendFile(conn, QString("%1%2%3").arg(QLCFile::systemDirectory(WEBFILESDIR).path())
+                   .arg(QDir::separator()).arg(clUri), "text/css") == true)
           return MG_TRUE;
   }
   else if (QString(conn->uri).endsWith(".js"))
   {
       QString clUri = QString(conn->uri).mid(1);
-      if (sendFile(conn, QString("%1%2%3").arg(WEBFILESDIR).arg(QDir::separator()).arg(clUri), "text/javascript") == true)
+      if (sendFile(conn, QString("%1%2%3").arg(QLCFile::systemDirectory(WEBFILESDIR).path())
+                   .arg(QDir::separator()).arg(clUri), "text/javascript") == true)
           return MG_TRUE;
   }
   else if (QString(conn->uri) != "/")
@@ -418,6 +422,11 @@ mg_result WebAccess::websocketDataHandler(mg_connection *conn)
         {
             QProcess *rebootProcess = new QProcess();
             rebootProcess->start("reboot", QStringList());
+        }
+        else if (cmdList.at(1) == "HALT")
+        {
+            QProcess *haltProcess = new QProcess();
+            haltProcess->start("halt", QStringList());
         }
     }
 #endif
@@ -653,6 +662,13 @@ mg_result WebAccess::websocketDataHandler(mg_connection *conn)
     return MG_TRUE;
 }
 
+mg_result WebAccess::closeHandler(struct mg_connection* conn)
+{
+    (void)conn;
+    m_conn = NULL;
+    return MG_TRUE;
+}
+
 QString WebAccess::getWidgetHTML(VCWidget *widget)
 {
     QString str = "<div class=\"vcwidget\" style=\""
@@ -669,6 +685,9 @@ QString WebAccess::getWidgetHTML(VCWidget *widget)
 
 void WebAccess::slotFramePageChanged(int pageNum)
 {
+    if (m_conn == NULL)
+        return;
+
     VCWidget *frame = (VCWidget *)sender();
 
     QString wsMessage = QString("%1|FRAME|%2").arg(frame->id()).arg(pageNum);
@@ -761,6 +780,9 @@ QString WebAccess::getSoloFrameHTML(VCSoloFrame *frame)
 
 void WebAccess::slotButtonToggled(bool on)
 {
+    if (m_conn == NULL)
+        return;
+
     VCButton *btn = (VCButton *)sender();
 
     QString wsMessage = QString::number(btn->id());
@@ -798,6 +820,9 @@ QString WebAccess::getButtonHTML(VCButton *btn)
 
 void WebAccess::slotSliderValueChanged(QString val)
 {
+    if (m_conn == NULL)
+        return;
+
     VCSlider *slider = (VCSlider *)sender();
 
     QString wsMessage = QString("%1|SLIDER|%2").arg(slider->id()).arg(val);
@@ -881,6 +906,9 @@ QString WebAccess::getAudioTriggersHTML(VCAudioTriggers *triggers)
 
 void WebAccess::slotCueIndexChanged(int idx)
 {
+    if (m_conn == NULL)
+        return;
+
     VCCueList *cue = (VCCueList *)sender();
 
     QString wsMessage = QString("%1|CUE|%2").arg(cue->id()).arg(idx);
@@ -1161,5 +1189,3 @@ void WebAccess::slotVCLoaded()
 {
     m_pendingProjectLoaded = true;
 }
-
-

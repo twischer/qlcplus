@@ -4,78 +4,78 @@
 <context>
     <name>WebAccess</name>
     <message>
-        <location filename="webaccess.cpp" line="189"/>
+        <location filename="webaccess.cpp" line="203"/>
         <source>Loading project...</source>
         <translation>Načítání projektu...</translation>
     </message>
     <message>
-        <location filename="webaccess.cpp" line="230"/>
+        <location filename="webaccess.cpp" line="244"/>
         <source>Fixture stored and loaded</source>
         <translation>Zařízení uložena a načtena</translation>
     </message>
     <message>
-        <location filename="webaccess.cpp" line="383"/>
+        <location filename="webaccess.cpp" line="398"/>
         <source>Network configuration changed. Reboot to apply the changes.</source>
         <translation>Konfigurace sítě byla změněna. Restartuje pro aplikování změn.</translation>
     </message>
     <message>
-        <location filename="webaccess.cpp" line="402"/>
+        <location filename="webaccess.cpp" line="417"/>
         <source>Autostart configuration changed</source>
         <translation>Postartovní konfigurace změněna</translation>
     </message>
     <message>
-        <location filename="webaccess.cpp" line="660"/>
+        <location filename="webaccess.cpp" line="681"/>
         <source>Widget not supported (yet) for web access</source>
         <translation>Ovládací prvek (zatím) není podporován pro vzdálený přístup</translation>
     </message>
     <message>
-        <location filename="webaccess.cpp" line="703"/>
-        <location filename="webaccess.cpp" line="750"/>
+        <location filename="webaccess.cpp" line="721"/>
+        <location filename="webaccess.cpp" line="762"/>
         <source>Page</source>
         <translation type="unfinished">Strana</translation>
     </message>
     <message>
-        <location filename="webaccess.cpp" line="909"/>
+        <location filename="webaccess.cpp" line="900"/>
         <source>Enable</source>
         <translation>Zapnout</translation>
     </message>
     <message>
-        <location filename="webaccess.cpp" line="943"/>
+        <location filename="webaccess.cpp" line="930"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="webaccess.cpp" line="944"/>
+        <location filename="webaccess.cpp" line="931"/>
         <source>Fade In</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="webaccess.cpp" line="945"/>
+        <location filename="webaccess.cpp" line="932"/>
         <source>Fade Out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="webaccess.cpp" line="946"/>
+        <location filename="webaccess.cpp" line="933"/>
         <source>Duration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="webaccess.cpp" line="947"/>
+        <location filename="webaccess.cpp" line="934"/>
         <source>Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="webaccess.cpp" line="1175"/>
+        <location filename="webaccess.cpp" line="1161"/>
         <source>Load project</source>
         <translation>Načíst projekt</translation>
     </message>
     <message>
-        <location filename="webaccess.cpp" line="1177"/>
+        <location filename="webaccess.cpp" line="1163"/>
         <source>Simple Desk</source>
         <translation>Jednoduchý pult</translation>
     </message>
     <message>
-        <location filename="webaccess.cpp" line="1179"/>
+        <location filename="webaccess.cpp" line="1165"/>
         <source>Configuration</source>
         <translation>Konfigurace</translation>
     </message>
@@ -162,55 +162,75 @@
     </message>
     <message>
         <location filename="webaccessnetwork.cpp" line="89"/>
-        <location filename="webaccessnetwork.cpp" line="277"/>
+        <location filename="webaccessnetwork.cpp" line="230"/>
         <source>Apply changes</source>
         <translation>Použít změny</translation>
     </message>
     <message>
-        <location filename="webaccessnetwork.cpp" line="260"/>
+        <location filename="webaccessnetwork.cpp" line="213"/>
         <source>Back</source>
         <translation>Zpět</translation>
     </message>
     <message>
-        <location filename="webaccessnetwork.cpp" line="266"/>
+        <location filename="webaccessnetwork.cpp" line="219"/>
         <source>Network configuration</source>
         <translation>Konfigurace sítě</translation>
     </message>
     <message>
-        <location filename="webaccessnetwork.cpp" line="271"/>
+        <location filename="webaccessnetwork.cpp" line="224"/>
         <source>Project autostart</source>
         <translation>Automatický start projektu</translation>
     </message>
     <message>
-        <location filename="webaccessnetwork.cpp" line="275"/>
+        <location filename="webaccessnetwork.cpp" line="228"/>
         <source>No project</source>
         <translation>Žádný zvolený projekt</translation>
     </message>
     <message>
-        <location filename="webaccessnetwork.cpp" line="276"/>
+        <location filename="webaccessnetwork.cpp" line="229"/>
         <source>Use current project</source>
         <translation>Použít aktuální projekt</translation>
     </message>
     <message>
-        <location filename="webaccessnetwork.cpp" line="281"/>
+        <location filename="webaccessnetwork.cpp" line="234"/>
         <source>Reboot</source>
         <translation>Restartovat</translation>
+    </message>
+    <message>
+        <location filename="webaccessnetwork.cpp" line="235"/>
+        <source>Shutdown</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>WebAccessSimpleDesk</name>
     <message>
-        <location filename="webaccesssimpledesk.cpp" line="215"/>
+        <location filename="webaccesssimpledesk.cpp" line="50"/>
         <source>Back</source>
         <translation>Zpět</translation>
     </message>
     <message>
-        <location filename="webaccesssimpledesk.cpp" line="220"/>
+        <location filename="webaccesssimpledesk.cpp" line="55"/>
         <source>Page</source>
         <translation>Strana</translation>
     </message>
     <message>
-        <location filename="webaccesssimpledesk.cpp" line="234"/>
+        <location filename="webaccesssimpledesk.cpp" line="56"/>
+        <source>Previous page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="webaccesssimpledesk.cpp" line="64"/>
+        <source>Next page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="webaccesssimpledesk.cpp" line="67"/>
+        <source>Reset universe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="webaccesssimpledesk.cpp" line="69"/>
         <source>Universe</source>
         <translation>Větev</translation>
     </message>

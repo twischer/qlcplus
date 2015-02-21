@@ -38,6 +38,7 @@
 #define KXMLQLCVCFrameIsCollapsed   "Collapsed"
 #define KXMLQLCVCFrameIsDisabled    "Disabled"
 #define KXMLQLCVCFrameEnableSource  "Enable"
+#define KXMLQLCVCFrameShowEnableButton "ShowEnableButton"
 
 #define KXMLQLCVCFrameMultipage   "Multipage"
 #define KXMLQLCVCFramePagesNumber "PagesNum"
@@ -45,6 +46,7 @@
 #define KXMLQLCVCFrameKey         "Key"
 #define KXMLQLCVCFrameNext        "Next"
 #define KXMLQLCVCFramePrevious    "Previous"
+#define KXMLQLCVCFramePagesLoop   "PagesLoop"
 
 class VCFrame : public VCWidget
 {
@@ -101,7 +103,11 @@ public:
 
     bool isHeaderVisible() const;
 
-    bool isCollapsed();
+    void setEnableButtonVisible(bool enable);
+
+    bool isEnableButtonVisible() const;
+
+    bool isCollapsed() const;
 
 protected slots:
     void slotCollapseButtonToggled(bool toggle);
@@ -125,6 +131,7 @@ protected:
     QLabel *m_label;
     bool m_collapsed;
     bool m_showHeader;
+    bool m_showEnableButton;
     int m_width, m_height;
 
     /*********************************************************************
@@ -138,6 +145,9 @@ public:
     int totalPagesNumber();
 
     virtual int currentPage();
+
+    void setPagesLoop(bool pagesLoop);
+    bool pagesLoop() const;
 
     virtual void addWidgetToPageMap(VCWidget *widget);
     virtual void removeWidgetFromPageMap(VCWidget *widget);
@@ -156,6 +166,7 @@ protected:
     ushort m_totalPagesNumber;
     QToolButton *m_nextPageBtn, *m_prevPageBtn;
     QLabel *m_pageLabel;
+    bool m_pagesLoop;
 
     /** Here's where the magic takes place. This holds a map
      *  of pages/widgets to be shown/hidden when page is changed */

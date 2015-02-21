@@ -34,13 +34,13 @@
     <message>
         <location filename="addchannelsdialog.ui" line="14"/>
         <source>Fixture Mode Channels Editor</source>
-        <translation>Fixture Mode Channels Editor</translation>
+        <translation>Fixture Mode Kanalen Editor</translation>
     </message>
     <message>
         <location filename="addchannelsdialog.ui" line="30"/>
         <source>Available channels</source>
         <oldsource>All channels</oldsource>
-        <translation>Beschikbare channels</translation>
+        <translation>Beschikbare kanalen</translation>
     </message>
     <message>
         <location filename="addchannelsdialog.ui" line="94"/>
@@ -51,7 +51,7 @@
     <message>
         <location filename="addchannelsdialog.ui" line="102"/>
         <source>Mode channels</source>
-        <translation>Mode channels</translation>
+        <translation>Mode kanalen</translation>
     </message>
 </context>
 <context>
@@ -193,8 +193,8 @@
     </message>
     <message>
         <location filename="capabilitywizard.ui" line="42"/>
-        <source>Gap</source>
-        <translation>Gat</translation>
+        <source>Width</source>
+        <translation>Breedte</translation>
     </message>
     <message>
         <location filename="capabilitywizard.ui" line="49"/>
@@ -240,32 +240,32 @@
 <context>
     <name>DocBrowser</name>
     <message>
-        <location filename="../ui/src/docbrowser.cpp" line="104"/>
+        <location filename="../ui/src/docbrowser.cpp" line="105"/>
         <source>%1 - Document Browser</source>
         <translation>%1 - Documentenbrowser</translation>
     </message>
     <message>
-        <location filename="../ui/src/docbrowser.cpp" line="120"/>
+        <location filename="../ui/src/docbrowser.cpp" line="121"/>
         <source>Backward</source>
         <translation>Vorige</translation>
     </message>
     <message>
-        <location filename="../ui/src/docbrowser.cpp" line="121"/>
+        <location filename="../ui/src/docbrowser.cpp" line="122"/>
         <source>Forward</source>
         <translation>Volgende</translation>
     </message>
     <message>
-        <location filename="../ui/src/docbrowser.cpp" line="122"/>
+        <location filename="../ui/src/docbrowser.cpp" line="123"/>
         <source>Index</source>
         <translation>Index</translation>
     </message>
     <message>
-        <location filename="../ui/src/docbrowser.cpp" line="123"/>
+        <location filename="../ui/src/docbrowser.cpp" line="124"/>
         <source>About Qt</source>
         <translation>Over Qt</translation>
     </message>
     <message>
-        <location filename="../ui/src/docbrowser.cpp" line="151"/>
+        <location filename="../ui/src/docbrowser.cpp" line="152"/>
         <source>Close</source>
         <translation>Sluiten</translation>
     </message>
@@ -299,7 +299,7 @@
     </message>
     <message>
         <location filename="editcapability.ui" line="106"/>
-        <location filename="editcapability.cpp" line="44"/>
+        <location filename="editcapability.cpp" line="45"/>
         <source>Gobo</source>
         <translation>Gobo</translation>
     </message>
@@ -317,7 +317,7 @@
     </message>
     <message>
         <location filename="editcapability.ui" line="179"/>
-        <location filename="editcapability.cpp" line="46"/>
+        <location filename="editcapability.cpp" line="47"/>
         <source>Colour</source>
         <translation>Kleur</translation>
     </message>
@@ -327,17 +327,17 @@
         <translation>Tweede kleur</translation>
     </message>
     <message>
-        <location filename="editcapability.cpp" line="48"/>
+        <location filename="editcapability.cpp" line="49"/>
         <source>Effect</source>
         <translation>Effect</translation>
     </message>
     <message>
-        <location filename="editcapability.cpp" line="138"/>
+        <location filename="editcapability.cpp" line="132"/>
         <source>Open Gobo File</source>
         <translation>Open Gobo afbeelding</translation>
     </message>
     <message>
-        <location filename="editcapability.cpp" line="141"/>
+        <location filename="editcapability.cpp" line="135"/>
         <source>Gobo pictures</source>
         <translation>Gobo-afbeeldingen</translation>
     </message>
@@ -347,7 +347,7 @@
     <message>
         <location filename="editchannel.ui" line="14"/>
         <source>Edit Channel</source>
-        <translation>Wijzig channel</translation>
+        <translation>Wijzig kanaal</translation>
     </message>
     <message>
         <location filename="editchannel.ui" line="20"/>
@@ -435,20 +435,20 @@
         <translation>Capability wizard</translation>
     </message>
     <message>
-        <location filename="editchannel.cpp" line="251"/>
-        <location filename="editchannel.cpp" line="317"/>
-        <location filename="editchannel.cpp" line="361"/>
+        <location filename="editchannel.cpp" line="254"/>
+        <location filename="editchannel.cpp" line="320"/>
+        <location filename="editchannel.cpp" line="364"/>
         <source>Overlapping values</source>
         <translation>Overlappende waarden</translation>
     </message>
     <message>
-        <location filename="editchannel.cpp" line="252"/>
-        <location filename="editchannel.cpp" line="318"/>
+        <location filename="editchannel.cpp" line="255"/>
+        <location filename="editchannel.cpp" line="321"/>
         <source>The capability&apos;s values overlap with another capability!</source>
         <translation>De waarden van deze capability overlappen die van een andere capability!</translation>
     </message>
     <message>
-        <location filename="editchannel.cpp" line="362"/>
+        <location filename="editchannel.cpp" line="365"/>
         <source>Some capabilities could not be created because of overlapping values.</source>
         <translation>Sommige capabilities konden niet worden aangemaakt wegens overlappende waarden.</translation>
     </message>
@@ -463,7 +463,7 @@
     <message>
         <location filename="edithead.ui" line="33"/>
         <source>Channel</source>
-        <translation>Channel</translation>
+        <translation>Kanaal</translation>
     </message>
     <message>
         <location filename="edithead.ui" line="38"/>
@@ -486,7 +486,7 @@
     <message>
         <location filename="editmode.ui" line="34"/>
         <source>Channels</source>
-        <translation>Channels</translation>
+        <translation>Kanalen</translation>
     </message>
     <message>
         <location filename="editmode.ui" line="59"/>
@@ -502,22 +502,22 @@
     <message>
         <location filename="editmode.ui" line="72"/>
         <source>Add channel(s) to this mode</source>
-        <translation>Voeg een of meerdere channels toe aan deze mode</translation>
+        <translation>Voeg een of meerdere kanalen toe aan deze mode</translation>
     </message>
     <message>
         <location filename="editmode.ui" line="92"/>
         <source>Remove the selected channel</source>
-        <translation>Verwijder de geselecteerde channel</translation>
+        <translation>Verwijder het geselecteerde kanaal</translation>
     </message>
     <message>
         <location filename="editmode.ui" line="112"/>
         <source>Raise the selected channel</source>
-        <translation>Verplaats deze channel naar boven</translation>
+        <translation>Verplaats dit kanaal naar boven</translation>
     </message>
     <message>
         <location filename="editmode.ui" line="132"/>
         <source>Lower the selected channel</source>
-        <translation>Verplaats deze channel naar beneden</translation>
+        <translation>Verplaats dit kanaal naar beneden</translation>
     </message>
     <message>
         <location filename="editmode.ui" line="166"/>
@@ -542,7 +542,7 @@
     <message>
         <location filename="editmode.ui" line="227"/>
         <source>Edit the channels that belong to the selected head</source>
-        <translation>Wijzig de channels die toebehoren aan de geselecteerde head</translation>
+        <translation>Wijzig de kanalen die toebehoren aan de geselecteerde head</translation>
     </message>
     <message>
         <location filename="editmode.ui" line="230"/>
@@ -864,7 +864,7 @@
         <location filename="fixtureeditor.ui" line="238"/>
         <location filename="fixtureeditor.ui" line="438"/>
         <source>Channels</source>
-        <translation>Channels</translation>
+        <translation>Kanalen</translation>
     </message>
     <message>
         <location filename="fixtureeditor.ui" line="260"/>
@@ -880,32 +880,32 @@
     <message>
         <location filename="fixtureeditor.ui" line="273"/>
         <source>Add a channel</source>
-        <translation>Voeg channel toe</translation>
+        <translation>Voeg een kanaal toe</translation>
     </message>
     <message>
         <location filename="fixtureeditor.ui" line="293"/>
         <source>Remove the selected channel</source>
-        <translation>Verwijder de geselecteerde channel</translation>
+        <translation>Verwijder het geselecteerde kanaal</translation>
     </message>
     <message>
         <location filename="fixtureeditor.ui" line="313"/>
         <source>Edit the selected channel</source>
-        <translation>Wijzig de geselecteerde channel</translation>
+        <translation>Wijzig het geselecteerde kanaal</translation>
     </message>
     <message>
         <location filename="fixtureeditor.ui" line="340"/>
         <source>Copy the selected channel to the clipboard</source>
-        <translation>Kopieer de geselecteerde channel naar het klembord</translation>
+        <translation>Kopieer het geselecteerde kanaal naar het klembord</translation>
     </message>
     <message>
         <location filename="fixtureeditor.ui" line="360"/>
         <source>Paste the channel in clipboard to this fixture</source>
-        <translation>Plak de channel van het klembord</translation>
+        <translation>Plak het kanaal van het klembord</translation>
     </message>
     <message>
         <location filename="fixtureeditor.ui" line="393"/>
         <source>Open/close all channel items</source>
-        <translation>Open/Sluit alle items van de channel</translation>
+        <translation>Open/Sluit alle items van het kanaal</translation>
     </message>
     <message>
         <location filename="fixtureeditor.ui" line="414"/>
@@ -1002,30 +1002,30 @@ Unable to save fixture.</source>
         <location filename="fixtureeditor.cpp" line="424"/>
         <location filename="fixtureeditor.cpp" line="509"/>
         <source>Channel already exists</source>
-        <translation>Channel bestaat al</translation>
+        <translation>Kanaal bestaat al</translation>
     </message>
     <message>
         <location filename="fixtureeditor.cpp" line="425"/>
         <location filename="fixtureeditor.cpp" line="510"/>
         <source>A channel by the name &quot;%1&quot; already exists!</source>
-        <translation>Een channel met de naam &quot;%1&quot; bestaat al!</translation>
+        <translation>Een kanaal met de naam &quot;%1&quot; bestaat al!</translation>
     </message>
     <message>
         <location filename="fixtureeditor.cpp" line="432"/>
         <location filename="fixtureeditor.cpp" line="516"/>
         <source>Channel has no name</source>
-        <translation>Naam van de channel ontbreekt</translation>
+        <translation>Naam van het kanaal ontbreekt</translation>
     </message>
     <message>
         <location filename="fixtureeditor.cpp" line="433"/>
         <location filename="fixtureeditor.cpp" line="517"/>
         <source>You must give the channel a descriptive name!</source>
-        <translation>Je moet de channel een naam geven!</translation>
+        <translation>Je moet het kanaal een naam geven!</translation>
     </message>
     <message>
         <location filename="fixtureeditor.cpp" line="468"/>
         <source>Are you sure you wish to remove channel: %1 ?</source>
-        <translation>Channel verwijderen: %1 ?</translation>
+        <translation>Kanaal verwijderen: %1 ?</translation>
     </message>
     <message>
         <location filename="fixtureeditor.cpp" line="784"/>
@@ -1061,7 +1061,7 @@ Unable to save fixture.</source>
     <message>
         <location filename="fixtureeditor.cpp" line="643"/>
         <source>Channels</source>
-        <translation>Channels</translation>
+        <translation>Kanalen</translation>
     </message>
     <message>
         <location filename="fixtureeditor.cpp" line="739"/>

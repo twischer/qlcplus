@@ -120,7 +120,7 @@ public:
     void calculateColorDelta();
     void setStepColor(QColor color);
     QColor stepColor();
-    void updateStepColor(Function::Direction direction);
+    void updateStepColor(int step);
 
 private:
     QColor m_startColor;
@@ -174,7 +174,7 @@ private:
     void updateMapChannels(const RGBMap& map, const FixtureGroup* grp);
 
     /** Grab starting values for a fade channel from $fader if available */
-    void insertStartValues(FadeChannel& fc) const;
+    void insertStartValues(FadeChannel& fc, uint fadeTime) const;
 
 private:
     Function::Direction m_direction;
@@ -183,6 +183,7 @@ private:
     QTime* m_roundTime;
     QColor m_stepColor;
     int m_crDelta, m_cgDelta, m_cbDelta;
+    int m_stepCount;
 
     /*********************************************************************
      * Attributes

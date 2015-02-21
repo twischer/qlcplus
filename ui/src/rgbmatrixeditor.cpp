@@ -579,7 +579,7 @@ void RGBMatrixEditor::slotPreviewTimeout()
                 m_matrix->setStepColor(m_matrix->startColor());
             }
             else
-                m_matrix->updateStepColor(m_previewDirection);
+                m_matrix->updateStepColor(m_previewStep);
         }
         else
         {
@@ -593,7 +593,7 @@ void RGBMatrixEditor::slotPreviewTimeout()
                     m_matrix->setStepColor(m_matrix->startColor());
             }
             else
-                m_matrix->updateStepColor(m_previewDirection);
+                m_matrix->updateStepColor(m_previewStep);
         }
         map = m_matrix->previewMap(m_previewStep);
         m_previewIterator = 0;
@@ -646,6 +646,8 @@ void RGBMatrixEditor::slotDialDestroyed(QObject *)
 void RGBMatrixEditor::slotPatternActivated(const QString& text)
 {
     RGBAlgorithm* algo = RGBAlgorithm::algorithm(m_doc, text);
+    if (algo != NULL)
+        algo->setColors(m_matrix->startColor(), m_matrix->endColor());
     m_matrix->setAlgorithm(algo);
     m_matrix->calculateColorDelta();
     updateExtraOptions();
@@ -1082,6 +1084,10 @@ void RGBMatrixEditor::slotSaveToSequenceClicked()
                         step.values.append(SceneValue(head.fxi, master, 255));
                 }
             }
+            // !! Important !! matrix's heads can be displaced randomly but in a sequence
+            // we absolutely need ordered values. So do it now !
+            qSort(step.values.begin(), step.values.end());
+
             chaser->addStep(step);
             currentStep += increment;
             if (currentStep == totalSteps && m_matrix->runOrder() == RGBMatrix::PingPong)
@@ -1089,7 +1095,7 @@ void RGBMatrixEditor::slotSaveToSequenceClicked()
                 currentStep = totalSteps - 2;
                 increment = -1;
             }
-            m_matrix->updateStepColor(m_matrix->direction());
+            m_matrix->updateStepColor(currentStep);
         }
 
         m_doc->addFunction(chaser);

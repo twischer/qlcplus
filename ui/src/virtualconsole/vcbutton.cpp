@@ -358,11 +358,11 @@ void VCButton::setFunction(quint32 fid)
     {
         /* Get rid of old function connections */
         disconnect(old, SIGNAL(running(quint32)),
-                   this, SLOT(slotFunctionRunning(quint32)));
+                this, SLOT(slotFunctionRunning(quint32)));
         disconnect(old, SIGNAL(stopped(quint32)),
-                   this, SLOT(slotFunctionStopped(quint32)));
+                this, SLOT(slotFunctionStopped(quint32)));
         disconnect(old, SIGNAL(flashing(quint32,bool)),
-                   this, SLOT(slotFunctionFlashing(quint32,bool)));
+                this, SLOT(slotFunctionFlashing(quint32,bool)));
     }
 
     Function* function = m_doc->function(fid);
@@ -392,16 +392,19 @@ quint32 VCButton::function() const
     return m_function;
 }
 
-void VCButton::stopFunction()
+void VCButton::notifyFunctionStarting(quint32 fid)
 {
     if (mode() == Doc::Design)
+        return;
+
+    if (fid == m_function)
         return;
 
     if (m_function != Function::invalidId() && action() == VCButton::Toggle)
     {
         Function *f = m_doc->function(m_function);
-        if (f != NULL && f->isRunning())
-            f->stopAndWait();
+        if (f != NULL && !f->stopped())
+            f->stop();
     }
 }
 
@@ -667,7 +670,7 @@ void VCButton::pressFunction()
                     f->adjustAttribute(intensity(), Function::Intensity);
 
                 f->start(m_doc->masterTimer());
-                emit functionStarting();
+                emit functionStarting(m_function);
             }
         }
     }
@@ -790,7 +793,12 @@ void VCButton::adjustIntensity(qreal val)
 {
     Function* func = m_doc->function(m_function);
     if (func != NULL)
-        func->adjustAttribute(startupIntensity() * val, Function::Intensity);
+    {
+        if (isStartupIntensityEnabled())
+            func->adjustAttribute(startupIntensity() * val, Function::Intensity);
+        else
+            func->adjustAttribute(val, Function::Intensity);
+    }
 
     VCWidget::adjustIntensity(val);
 }

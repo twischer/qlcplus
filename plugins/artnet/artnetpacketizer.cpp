@@ -85,7 +85,6 @@ void ArtNetPacketizer::setupArtNetPollReply(QByteArray &data, QHostAddress ipAdd
     data.append("QLC+");   // Short Name
     for (i = 0; i < 14; i++)
         data.append((char)0x00); // 14 bytes of stuffing
-    data.resize(data.length() + 14);
     data.append("Q Light Controller Plus - ArtNet interface"); // Long Name
     for (i = 0; i < 22; i++) // 64-42 bytes of stuffing. 42 is the lenght of the long name
         data.append((char)0x00);
@@ -132,7 +131,7 @@ void ArtNetPacketizer::setupArtNetDmx(QByteArray& data, const int &universe, con
     data.append((char)(len >> 8));
     data.append((char)(len & 0x00FF));
     data.append(values);
-    data.append(0, padLength);
+    data.append(QByteArray(padLength, 0));
 
     if (m_sequence[universe] == 0xff)
         m_sequence[universe] = 1;

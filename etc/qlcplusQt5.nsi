@@ -5,7 +5,7 @@
 ;--------------------------------
 ;Defines
 !define QLCPLUS_HOME "c:\Qt\qlcplus"
-!define MUI_ICON "${QLCPLUS_HOME}\gfx\qlcplus.ico"
+!define MUI_ICON "${QLCPLUS_HOME}\resources\icons\qlcplus.ico"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 !define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\win.bmp"
@@ -15,7 +15,7 @@
 ;--------------------------------
 ;General
 Name "Q Light Controller Plus"
-OutFile "QLC+_4.8.3.exe"
+OutFile "QLC+_4.8.5.exe"
 InstallDir C:\QLC+
 InstallDirRegKey HKCU "Software\qlcplus" "Install_Dir"
 RequestExecutionLevel user

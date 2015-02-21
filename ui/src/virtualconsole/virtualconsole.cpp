@@ -702,32 +702,41 @@ VCWidget* VirtualConsole::closestParent() const
     return NULL;
 }
 
-void VirtualConsole::checkWidgetPage(VCWidget *widget, VCWidget *parent)
+void VirtualConsole::connectWidgetToParent(VCWidget *widget, VCWidget *parent)
 {
-    if (parent->type() == VCWidget::FrameWidget)
+    if (parent->type() == VCWidget::FrameWidget
+            || parent->type() == VCWidget::SoloFrameWidget)
     {
         VCFrame *frame = (VCFrame *)parent;
-        if (frame->multipageMode() == true)
-        {
-            widget->setPage(frame->currentPage());
-            frame->addWidgetToPageMap(widget);
-        }
-        else
-            widget->setPage(0);
-    }
-    else if (parent->type() == VCWidget::SoloFrameWidget)
-    {
-        VCSoloFrame *frame = (VCSoloFrame *)parent;
-        if (frame->multipageMode() == true)
-        {
-            widget->setPage(frame->currentPage());
-            frame->addWidgetToPageMap(widget);
-        }
-        else
-            widget->setPage(0);
+        widget->setPage(frame->currentPage());
+        frame->addWidgetToPageMap(widget);
     }
     else
         widget->setPage(0);
+
+    if (widget->type() == VCWidget::SliderWidget)
+    {
+        VCSlider *slider = (VCSlider *)widget;
+        connect(slider, SIGNAL(submasterValueChanged(qreal)),
+                parent, SLOT(slotSubmasterValueChanged(qreal)));
+    }
+}
+
+void VirtualConsole::disconnectWidgetFromParent(VCWidget *widget, VCWidget *parent)
+{
+    if (parent->type() == VCWidget::FrameWidget
+            || parent->type() == VCWidget::SoloFrameWidget)
+    {
+        VCFrame *frame = (VCFrame *)parent;
+        frame->removeWidgetFromPageMap(widget);
+    }
+
+    if (widget->type() == VCWidget::SliderWidget)
+    {
+        VCSlider *slider = (VCSlider *)widget;
+        disconnect(slider, SIGNAL(submasterValueChanged(qreal)),
+                parent, SLOT(slotSubmasterValueChanged(qreal)));
+    }
 }
 
 void VirtualConsole::slotAddButton()
@@ -763,7 +772,7 @@ void VirtualConsole::slotAddButtonMatrix()
     Q_ASSERT(frame != NULL);
     addWidgetInMap(frame);
     frame->setHeaderVisible(false);
-    checkWidgetPage(frame, parent);
+    connectWidgetToParent(frame, parent);
 
     // Resize the parent frame to fit the buttons nicely and toggle resizing off
     frame->resize(QSize((h * sz) + 20, (v * sz) + 20));
@@ -776,6 +785,7 @@ void VirtualConsole::slotAddButtonMatrix()
             VCButton* button = new VCButton(frame, m_doc);
             Q_ASSERT(button != NULL);
             addWidgetInMap(button);
+            connectWidgetToParent(button, frame);
             button->move(QPoint(10 + (x * sz), 10 + (y * sz)));
             button->resize(QSize(sz, sz));
             button->show();
@@ -812,8 +822,6 @@ void VirtualConsole::slotAddSlider()
     VCSlider* slider = new VCSlider(parent, m_doc);
     setupWidget(slider, parent);
     m_doc->setModified();
-    connect(slider, SIGNAL(submasterValueChanged(qreal)),
-            parent, SLOT(slotSubmasterValueChanged(qreal)));
 }
 
 void VirtualConsole::slotAddSliderMatrix()
@@ -834,7 +842,7 @@ void VirtualConsole::slotAddSliderMatrix()
     Q_ASSERT(frame != NULL);
     addWidgetInMap(frame);
     frame->setHeaderVisible(false);
-    checkWidgetPage(frame, parent);
+    connectWidgetToParent(frame, parent);
 
     // Resize the parent frame to fit the sliders nicely
     frame->resize(QSize((count * width) + 20, height + 20));
@@ -845,11 +853,10 @@ void VirtualConsole::slotAddSliderMatrix()
         VCSlider* slider = new VCSlider(frame, m_doc);
         Q_ASSERT(slider != NULL);
         addWidgetInMap(slider);
+        connectWidgetToParent(slider, frame);
         slider->move(QPoint(10 + (width * i), 10));
         slider->resize(QSize(width, height));
         slider->show();
-        connect(slider, SIGNAL(submasterValueChanged(qreal)),
-                frame, SLOT(slotSubmasterValueChanged(qreal)));
     }
 
     // Show the frame after adding buttons to prevent flickering
@@ -872,8 +879,6 @@ void VirtualConsole::slotAddKnob()
     knob->resize(QSize(60, 90));
     knob->setWidgetStyle(VCSlider::WKnob);
     knob->setCaption(tr("Knob %1").arg(knob->id()));
-    connect(knob, SIGNAL(submasterValueChanged(qreal)),
-            parent, SLOT(slotSubmasterValueChanged(qreal)));
     m_doc->setModified();
 }
 
@@ -951,8 +956,6 @@ void VirtualConsole::slotAddAudioTriggers()
 
     VCAudioTriggers* triggers = new VCAudioTriggers(parent, m_doc);
     setupWidget(triggers, parent);
-    connect(triggers, SIGNAL(enableRequest(quint32)),
-            this, SLOT(slotEnableAudioTriggers(quint32)));
     m_doc->setModified();
 }
 
@@ -1096,13 +1099,17 @@ void VirtualConsole::slotEditPaste()
             if (widget == parent)
                 continue;
 
+            VCWidget* prevParent = qobject_cast<VCWidget*> (widget->parentWidget());
+            if (prevParent != NULL)
+                disconnectWidgetFromParent(widget, prevParent);
+
             /* Get widget's relative pos to the bounding rect */
             QPoint p(widget->x() - bounds.x() + cp.x(),
                      widget->y() - bounds.y() + cp.y());
 
             /* Reparent and move to the correct place */
             widget->setParent(parent);
-            checkWidgetPage(widget, parent);
+            connectWidgetToParent(widget, parent);
             widget->move(p);
             widget->show();
         }
@@ -1129,7 +1136,7 @@ void VirtualConsole::slotEditPaste()
             VCWidget* copy = widget->createCopy(parent);
             Q_ASSERT(copy != NULL);
             addWidgetInMap(copy);
-            checkWidgetPage(copy, parent);
+            connectWidgetToParent(copy, parent);
             copy->move(p);
             copy->show();
         }
@@ -1153,24 +1160,13 @@ void VirtualConsole::slotEditDelete()
                delete each widget. */
             VCWidget* widget = m_selectedWidgets.takeFirst();
             m_widgetsMap.remove(widget->id());
+            foreach (VCWidget* child, getChildren(widget))
+                m_widgetsMap.remove(child->id());
             VCWidget* parent = qobject_cast<VCWidget*> (widget->parentWidget());
             widget->deleteLater();
 
             if (parent != NULL)
-            {
-                if (parent->type() == VCWidget::FrameWidget)
-                {
-                    VCFrame *frame = (VCFrame *)parent;
-                    if (frame->multipageMode() == true)
-                        frame->removeWidgetFromPageMap(widget);
-                }
-                else if (parent->type() == VCWidget::SoloFrameWidget)
-                {
-                    VCSoloFrame *frame = (VCSoloFrame *)parent;
-                    if (frame->multipageMode() == true)
-                        frame->removeWidgetFromPageMap(widget);
-                }
-            }
+                disconnectWidgetFromParent(widget, parent);
 
             /* Remove the widget from clipboard as well so that
                deleted widgets won't be pasted anymore anywhere */
@@ -1180,6 +1176,7 @@ void VirtualConsole::slotEditDelete()
 
         updateActions();
     }
+    m_doc->setModified();
 }
 
 void VirtualConsole::slotEditProperties()
@@ -1387,6 +1384,8 @@ void VirtualConsole::slotStackingRaise()
     VCWidget* widget;
     foreach(widget, m_selectedWidgets)
         widget->raise();
+
+    m_doc->setModified();
 }
 
 void VirtualConsole::slotStackingLower()
@@ -1399,25 +1398,8 @@ void VirtualConsole::slotStackingLower()
     VCWidget* widget;
     foreach(widget, m_selectedWidgets)
         widget->lower();
-}
 
-void VirtualConsole::slotEnableAudioTriggers(quint32 id)
-{
-    QList<VCWidget *> widgetsList = getChildren((VCWidget *)m_contents);
-    VCAudioTriggers *enableWidget = NULL;
-    foreach (VCWidget *widget, widgetsList)
-    {
-        if (widget->type() == VCWidget::AudioTriggersWidget)
-        {
-            VCAudioTriggers *triggers = (VCAudioTriggers *)widget;
-            if (widget->id() == id)
-                enableWidget = triggers;
-            else
-                triggers->enableCapture(false);
-        }
-    }
-    if (enableWidget != NULL)
-        enableWidget->enableCapture(true);
+    m_doc->setModified();
 }
 
 /*****************************************************************************
@@ -1540,8 +1522,33 @@ void VirtualConsole::resetContents()
 
 void VirtualConsole::addWidgetInMap(VCWidget* widget)
 {
-    widget->setID(newWidgetId());
-    m_widgetsMap.insert(widget->id(), widget);
+    // Valid ID ?
+    if (widget->id() != VCWidget::invalidId())
+    {
+
+        // Maybe we don't know this widget yet
+        if (!m_widgetsMap.contains(widget->id()))
+        {
+            m_widgetsMap.insert(widget->id(), widget);
+            return;
+        }
+
+        // Maybe we already know this widget
+        if (m_widgetsMap[widget->id()] == widget)
+        {
+            qDebug() << Q_FUNC_INFO << "widget" << widget->id() << "already in map";
+            return;
+        }
+
+        // This widget id conflicts with another one we have to change it.
+        qDebug() << Q_FUNC_INFO << "widget id" << widget->id() << "conflicts, creating a new ID";
+    }
+
+    quint32 wid = newWidgetId();
+    Q_ASSERT(!m_widgetsMap.contains(wid));
+    qDebug() << Q_FUNC_INFO << "id=" << wid;
+    widget->setID(wid);
+    m_widgetsMap.insert(wid, widget);
 }
 
 void VirtualConsole::setupWidget(VCWidget *widget, VCWidget *parent)
@@ -1550,7 +1557,7 @@ void VirtualConsole::setupWidget(VCWidget *widget, VCWidget *parent)
     Q_ASSERT(parent != NULL);
 
     addWidgetInMap(widget);
-    checkWidgetPage(widget, parent);
+    connectWidgetToParent(widget, parent);
     widget->show();
     widget->move(parent->lastClickPoint());
     clearWidgetSelection();
@@ -1886,23 +1893,27 @@ void VirtualConsole::postLoad()
 
     /* Go through widgets, check IDs and register */
     /* widgets to the map */
-    QList<VCWidget *> widgetsList = getChildren((VCWidget *)m_contents);
+    /* This code is the same as the one in addWidgetInMap() */
+    /* We have to repeat it to limit conflicts if */
+    /* one widget was not saved with a valid ID, */
+    /* as addWidgetInMap ensures the widget WILL be added */
+    QList<VCWidget *> widgetsList = getChildren(m_contents);
     QList<VCWidget *> invalidWidgetsList;
     foreach (VCWidget *widget, widgetsList)
     {
         quint32 wid = widget->id();
-        if (wid != VCWidget::invalidId() && !m_widgetsMap.contains(wid))
-            m_widgetsMap.insert(wid, widget);
+        if (wid != VCWidget::invalidId())
+        {
+            if (!m_widgetsMap.contains(wid))
+                m_widgetsMap.insert(wid, widget);
+            else if (m_widgetsMap[wid] != widget)
+                invalidWidgetsList.append(widget);
+        }
         else
             invalidWidgetsList.append(widget);
     }
     foreach (VCWidget *widget, invalidWidgetsList)
-    {
-        quint32 wid = newWidgetId();
-        widget->setID(wid);
-        Q_ASSERT(!m_widgetsMap.contains(wid));
-        m_widgetsMap.insert(wid, widget);
-    }
+        addWidgetInMap(widget);
 
     m_contents->setFocus();
 
@@ -1912,7 +1923,7 @@ void VirtualConsole::postLoad()
 
 bool VirtualConsole::checkStartupFunction(quint32 fid)
 {
-    QList<VCWidget *> widgetsList = getChildren((VCWidget *)m_contents);
+    QList<VCWidget *> widgetsList = getChildren(m_contents);
 
     foreach (VCWidget *widget, widgetsList)
     {
