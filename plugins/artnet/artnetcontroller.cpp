@@ -148,6 +148,18 @@ QHash<QHostAddress, ArtNetNodeInfo> ArtNetController::getNodesList()
 
 void ArtNetController::sendDmx(const quint32 universe, const QByteArray &data)
 {
+    /*
+	 * Only send art net data,
+	 * if it has realy changed.
+	 * Some cheap art net receiver
+	 * can not process the data
+	 * fast enoungh.
+	 */
+	if (data == lastData)
+		return;
+	lastData = data;
+
+
     QByteArray dmxPacket;
     m_packetizer->setupArtNetDmx(dmxPacket, universe, data);
     qint64 sent = m_UdpSocket->writeDatagram(dmxPacket.data(), dmxPacket.size(),

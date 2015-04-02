@@ -109,6 +109,9 @@ private:
     /** Count the number of output universes using this controller */
     int m_outputRefCount;
 
+	/** contains the last send dmx data */
+	QByteArray lastData;
+
 private slots:
     /** Async event raised when new packets have been received */
     void processPendingPackets();
